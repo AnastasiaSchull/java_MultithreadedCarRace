@@ -23,25 +23,26 @@ public class RaceCarRunnable extends Car implements Runnable {
 
     @Override
     public void run() {
+        super.run();
         while (!isFinish) {
             int speed = getRandomSpeed();
-            passed += speed;
+            passed += speed; // добавляем пройденное расстояние
 
             if (passed >= distance) {
                 passed = distance;
-                isFinish = true;
+                isFinish = true; //машина финишировала
             }
 
             System.out.printf("%s => speed: %d; progress: %d/%d%n", getName(), speed, passed, distance);
 
             try {
-                Thread.sleep(500); // пауза пол сек. между итерациями
+                Thread.sleep(1000); // пауза 1 сек. между итерациями
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                System.out.println(getName() + " прерван.");
+                System.out.println(getName() + " was interrupted.");
             }
         }
-        System.out.println(getName() + " финишировал!");
+        System.out.println(getName() + " has finished!");
     }
 }
 
