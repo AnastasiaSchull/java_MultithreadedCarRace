@@ -2,6 +2,7 @@ package org.example;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 @Getter
 @Setter
@@ -10,10 +11,13 @@ public class RaceCarRunnable extends Car implements Runnable {
     private final int distance;   // длина трассы
     private boolean isFinish = false;//флаг завершения гонки
     private final Random random = new Random();
+    private final CountDownLatch latch; // счетчик синхронизации
+    private long finishTime; // для финиша в миллисекундах
 
-    public RaceCarRunnable(String name, int maxSpeed, int distance) {
+    public RaceCarRunnable(String name, int maxSpeed, int distance, CountDownLatch latch) {
         super(name, maxSpeed);
         this.distance = distance;
+        this.latch = latch;
     }
 
     private int getRandomSpeed() {
@@ -31,6 +35,12 @@ public class RaceCarRunnable extends Car implements Runnable {
             if (passed >= distance) {
                 passed = distance;
                 isFinish = true; //машина финишировала
+
+                // временя финиша
+                finishTime = System.currentTimeMillis() - Race.startRaceTime.get();
+
+                latch.countDown(); // -- счетчик
+                System.out.println(getName() + " FINISHED in " + finishTime + " ms");
             }
 
             System.out.printf("%s => speed: %d; progress: %d/%d%n", getName(), speed, passed, distance);
@@ -42,7 +52,6 @@ public class RaceCarRunnable extends Car implements Runnable {
                 System.out.println(getName() + " was interrupted.");
             }
         }
-        System.out.println(getName() + " has finished!");
     }
 }
 

@@ -18,6 +18,5 @@ public class Car implements Runnable {
         System.out.println(name + " is running with max speed: " + maxSpeed +
                 " and started at " + formattedTime);
     }
-
 }
 
